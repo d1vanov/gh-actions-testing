@@ -269,7 +269,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create continuous-main --draft=false --prerelease --title "Continuous build (continuous-main)" --target $GITHUB_SHA -R d1vanov/gh-actions-testing
+          export BRANCH_NAME=$(echo $GITHUB_REF | sed 's/.*\/\(.*\)$/\1/')
+          gh release create continuous-main --draft=false --prerelease --title "Continuous build (continuous-main)" --target $BRANCH_NAME -R d1vanov/gh-actions-testing
 
       - name: Create new continuous development release
         id: create_new_continuous_development_release
@@ -277,7 +278,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create continuous-development --draft=false --prerelease --title "Continuous build (continuous-development)" --target $GITHUB_SHA -R d1vanov/gh-actions-testing
+          export BRANCH_NAME=$(echo $GITHUB_REF | sed 's/.*\/\(.*\)$/\1/')
+          gh release create continuous-development --draft=false --prerelease --title "Continuous build (continuous-development)" --target $BRANCH_NAME -R d1vanov/gh-actions-testing
 
       - name: Create new tagged release
         id: create_new_tagged_release
@@ -286,7 +288,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REF: ${{ github.ref }}
         run: |
-          gh release create "$GITHUB_REF" --draft=false --title "Release build ($GITHUB_REF)" --target $GITHUB_SHA -R d1vanov/gh-actions-testing
+          gh release create "$GITHUB_REF" --draft=false --title "Release build ($GITHUB_REF)" --target $GITHUB_REF -R d1vanov/gh-actions-testing
 
       - name: Download linux artifact
         id: download_linux_artifact
