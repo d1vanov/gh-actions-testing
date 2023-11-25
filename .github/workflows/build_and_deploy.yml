@@ -239,10 +239,11 @@ jobs:
           export BRANCH_NAME=$(echo $GITHUB_REF | sed 's/.*\/\(.*\)$/\1/')
           gh api /repos/d1vanov/quentier/releases/tags/continuous-${BRANCH_NAME} > /tmp/gh_get_release.json && exit_status=$? || exit_status=$?
           if [ "${exit_status}" = 0 ]; then
-            export COMMIT_SHA=$(cat /tmp/gh_get_release.json | jq '.target_commitish');
+            export COMMIT_SHA=$(cat /tmp/gh_get_release.json | jq '.target_commitish')
             if ! [ "${COMMIT_SHA}" = "${GITHUB_SHA}" ]; then
               export PREVIOUS_CONTINUOUS_RELEASE_DELETED=0
-              for i in {1..10}; do
+              for i in {1..10}
+              do
                 echo "Trying to delete previous continuout release continuous-${BRANCH_NAME}"
                 gh release delete continuous-${BRANCH_NAME} -y -R d1vanov/quentier;
                 curl -X DELETE -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/d1vanov/quentier/git/refs/tags/continuous-${BRANCH_NAME};
@@ -254,7 +255,7 @@ jobs:
                 fi
                 echo "Was able to receive information about the attempted to be deleted previous continuous release, waiting for 5 seconds before the next attempt"
                 sleep 5
-              fi
+              done
               if [ "$PREVIOUS_CONTINUOUS_RELEASE_DELETED" != "1" ]; then
                 echo "Failed to delete previous continuous release after several attempts!"
               fi
