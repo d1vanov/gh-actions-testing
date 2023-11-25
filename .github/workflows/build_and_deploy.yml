@@ -237,7 +237,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           export BRANCH_NAME=$(echo $GITHUB_REF | sed 's/.*\/\(.*\)$/\1/')
-          gh api /repos/d1vanov/quentier/releases/tags/continuous-${BRANCH_NAME} > /tmp/gh_get_release.json && exit_status=$? || exit_status=$?
+          gh api /repos/d1vanov/gh-actions-testing/releases/tags/continuous-${BRANCH_NAME} > /tmp/gh_get_release.json && exit_status=$? || exit_status=$?
           if [ "${exit_status}" = 0 ]; then
             export COMMIT_SHA=$(cat /tmp/gh_get_release.json | jq '.target_commitish')
             if ! [ "${COMMIT_SHA}" = "${GITHUB_SHA}" ]; then
@@ -245,9 +245,9 @@ jobs:
               for i in {1..10}
               do
                 echo "Trying to delete previous continuout release continuous-${BRANCH_NAME}"
-                gh release delete continuous-${BRANCH_NAME} -y -R d1vanov/quentier;
-                curl -X DELETE -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/d1vanov/quentier/git/refs/tags/continuous-${BRANCH_NAME};
-                gh api /repos/d1vanov/quentier/releases/tags/continuous-${BRANCH_NAME} > /tmp/gh_get_release.json && exit_status=$? || exit_status=$?
+                gh release delete continuous-${BRANCH_NAME} -y -R d1vanov/gh-actions-testing;
+                curl -X DELETE -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/d1vanov/gh-actions-testing/git/refs/tags/continuous-${BRANCH_NAME};
+                gh api /repos/d1vanov/gh-actions-testing/releases/tags/continuous-${BRANCH_NAME} > /tmp/gh_get_release.json && exit_status=$? || exit_status=$?
                 if [ "${exit_status}" != 0 ]; then
                   echo "It appears that previous continuous release is deleted now"
                   export PREVIOUS_CONTINUOUS_RELEASE_DELETED=1
